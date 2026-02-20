@@ -3,7 +3,7 @@ import streamlit as st
 # 1. 페이지 기본 설정 (가장 먼저 와야 합니다)
 st.set_page_config(page_title="나의 MBTI 진로 탐험기", page_icon="✨", layout="centered")
 
-# 2. 화려한 네온사인 & 다크 테마 CSS 적용
+# 2. 화려한 네온사인 & 다크 테마 CSS 적용 (여기서 """ 열리고 닫히는 부분 주의!)
 st.markdown("""
 <style>
     .stApp {
@@ -50,4 +50,9 @@ st.markdown("""
         margin-top: 20px;
     }
     
-    .info-title { font-size: 1.2rem; font-
+    .info-title { font-size: 1.2rem; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+    .pros { color: #86efac; }
+    .cons { color: #fca5a5; }
+    .jobs { color: #fde047; }
+    
+    .info-content {
