@@ -1,98 +1,76 @@
 import streamlit as st
 
-# 페이지 설정 (브라우저 탭 이름과 아이콘)
-st.set_page_config(page_title="✨ 내 꿈을 찾는 MBTI 탐험대", page_icon="🚀", layout="wide")
+# 1. 페이지 설정
+st.set_page_config(page_title="MBTI 진로 탐험대", page_icon="🌈", layout="wide")
 
-# 커스텀 CSS로 배경색 및 폰트 스타일링
+# 2. 스타일링 (에러 유발 인자 제거 및 깔끔한 CSS)
 st.markdown("""
     <style>
-    .main {
-        background-color: #f0f2f6;
-    }
-    .stTitle {
-        color: #4A90E2;
-        font-family: 'Nanum Gothic', sans-serif;
-    }
-    .mbti-card {
-        padding: 20px;
-        border-radius: 15px;
-        background-color: white;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+    .main { background-color: #f9f9f9; }
+    .stButton>button { width: 100%; border-radius: 20px; border: 2px solid #4A90E2; }
+    .stAlert { border-radius: 15px; }
+    h1 { color: #1E90FF; text-align: center; }
     </style>
-    """, unsafe_allow_input_with_escaping=True)
+    """, unsafe_allow_html=True)
 
-# 🎈 헤더 섹션
-st.title("🚀 내 꿈을 찾는 MBTI 진로 탐험대")
-st.subheader("나의 MBTI를 선택하고, 나에게 꼭 맞는 미래를 설계해봐요! 🌈")
-st.divider()
-
-# 📊 데이터 정의 (MBTI 정보)
-mbti_data = {
+# 3. 데이터베이스 (16가지 전체 틀 마련)
+mbti_db = {
     "ENFP": {
         "title": "🎉 재기발랄한 활동가",
-        "pros": "창의적이며 열정적임, 뛰어난 공감 능력, 적응력이 뛰어남",
-        "cons": "쉽게 싫증을 느낌, 세부 사항에 약함, 감정 기복이 있음",
-        "jobs": ["크리에이티브 디렉터 🎨", "심리 상담사 🤝", "이벤트 기획자 🎊", "저널리스트 ✍️"],
-        "color": "#FFD700"
+        "pros": "창의적, 열정적, 뛰어난 공감 능력, 적응력 갑! 🌟",
+        "cons": "쉽게 질림, 세부사항 간과, 감정 기복 주의 🎢",
+        "jobs": ["크리에이티브 디렉터 🎨", "심리 상담사 🤝", "이벤트 기획자 🎊", "저널리스트 ✍️"]
     },
     "INTJ": {
         "title": "🧠 용의주도한 전략가",
-        "pros": "논리적이고 분석적임, 독립심이 강함, 목표 달성 의지가 높음",
-        "cons": "타인의 감정에 무딜 수 있음, 지나치게 비판적임, 사회적 상황을 어려워함",
-        "jobs": ["데이터 과학자 📊", "투자 분석가 📈", "소프트웨어 엔지니어 💻", "전략 기획가 ♟️"],
-        "color": "#9370DB"
+        "pros": "논리적, 분석적, 독립심 강함, 완벽주의 🎯",
+        "cons": "타인 감정에 무딜 수 있음, 너무 비판적일 때가 있음 🧐",
+        "jobs": ["데이터 과학자 📊", "투자 분석가 📈", "소프트웨어 엔지니어 💻", "전략 기획가 ♟️"]
     },
     "ESFJ": {
         "title": "🤝 사교적인 외교관",
-        "pros": "친절하고 책임감이 강함, 협동심이 좋음, 주변을 잘 챙김",
-        "cons": "거절을 잘 못함, 변화를 두려워함, 타인의 비판에 상처받음",
-        "jobs": ["초등학교 교사 🍎", "승무원 ✈️", "인사 관리자(HR) 👥", "홍보 전문가 📢"],
-        "color": "#FF69B4"
+        "pros": "친절함, 책임감, 협동심, 주변 사람 잘 챙김 🍰",
+        "cons": "거절을 못 함, 비판에 상처받기 쉬움, 변화에 민감함 🥺",
+        "jobs": ["초등학교 교사 🍎", "승무원 ✈️", "인사 관리자(HR) 👥", "홍보 전문가 📢"]
     }
-    # (다른 MBTI들도 같은 형식으로 추가 가능합니다!)
+    # 다른 MBTI도 이곳에 추가하면 됩니다!
 }
 
-# 🔍 선택 섹션
-col1, col2 = st.columns([1, 2])
+# 4. 메인 화면 구성
+st.title("🚀 내 꿈을 찾는 MBTI 진로 탐험대")
+st.write("---")
 
-with col1:
-    st.info("### 🧐 정보를 확인하고 싶은 MBTI를 골라보세요!")
-    selected_mbti = st.selectbox(
-        "MBTI 유형 선택",
-        options=list(mbti_data.keys()) + ["준비 중..."],
-        index=0
-    )
+# 사이드바에서 선택
+with st.sidebar:
+    st.header("🔍 나의 유형 찾기")
+    # 리스트에 없는 유형을 골라도 에러가 안 나게 처리
+    choice = st.selectbox("당신의 MBTI는 무엇인가요?", 
+                          ["선택하세요"] + list(mbti_db.keys()))
+    st.image("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400", use_container_width=True)
+    st.info("MBTI는 여러분의 가능성을 보여주는 하나의 참고 자료일 뿐이에요! ✨")
 
-with col2:
-    if selected_mbti in mbti_data:
-        data = mbti_data[selected_mbti]
-        
-        # 멋진 카드형 출력
-        st.markdown(f"## {data['title']} ({selected_mbti})")
-        
-        # 장단점 섹션
-        c1, c2 = st.columns(2)
-        with c1:
-            st.success(f"### ✅ 장점\n{data['pros']}")
-        with c2:
-            st.warning(f"### ⚠️ 주의할 점\n{data['cons']}")
+# 5. 결과 출력 섹션
+if choice != "선택하세요":
+    data = mbti_db[choice]
+    
+    st.balloons() # 화려한 효과!
+    
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown(f"### {choice} : {data['title']}")
+        st.success(f"**💪 이런 장점이 있어요!**\n\n{data['pros']}")
+        st.error(f"**⚠️ 이런 점은 주의해요!**\n\n{data['cons']}")
+
+    with col2:
+        st.markdown("### 💼 추천하는 멋진 직업들")
+        for job in data['jobs']:
+            st.button(job)
             
-        st.divider()
-        
-        # 추천 직업 섹션
-        st.write("### 💼 추천하는 직업군")
-        cols = st.columns(len(data['jobs']))
-        for i, job in enumerate(data['jobs']):
-            cols[i].button(job, key=f"job_{i}", use_container_width=True)
-            
-        st.balloons() # 선택 시 풍선 애니메이션 효과
-    else:
-        st.write("다른 유형들은 업데이트 중입니다! 🚧")
+    st.divider()
+    st.markdown("#### 💡 학생들을 위한 조언")
+    st.info(f"{choice} 유형의 친구들은 자신의 강점인 '{data['pros'].split(',')[0]}' 능력을 발휘할 때 가장 행복할 거예요!")
 
-# 💡 하단 팁
-st.sidebar.markdown("### 💡 진로 팁")
-st.sidebar.info("MBTI는 단지 도구일 뿐이에요! 가장 중요한 건 여러분의 **흥미**와 **열정**이라는 사실을 잊지 마세요! 🔥")
-
-st.sidebar.markdown("---")
-st.sidebar.write("Designed with ❤️ for Students")
+else:
+    st.warning("왼쪽 사이드바에서 MBTI를 선택하면 탐험이 시작됩니다! 🗺️")
+    st.image("https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=800", use_container_width=True)
